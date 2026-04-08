@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Legal Solution — Карта побыту в Польше</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --p900:#1A1640;--p800:#26215C;--p700:#312870;--p600:#3C3489;
+  --p500:#534AB7;--p400:#7F77DD;--p300:#AFA9EC;--p200:#CECBF6;
+  --gold:#C9A84C;--gold2:#E8C97A;
+  --dark:#0E0C1E;--darker:#080614;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--darker);color:#fff;overflow-x:hidden;}
+
+#pre{position:fixed;inset:0;z-index:9999;background:var(--p900);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.8s ease 0.2s,visibility 0.8s ease 0.2s;}
+#pre.out{opacity:0;visibility:hidden;pointer-events:none;}
+.pre-label{font-family:'Cormorant Garamond',serif;font-size:12px;letter-spacing:6px;color:var(--p300);margin-top:28px;animation:breathe 2s ease-in-out infinite;}
+.pre-bar-wrap{width:220px;height:2px;background:rgba(127,119,221,.18);border-radius:2px;margin-top:14px;overflow:hidden;}
+.pre-bar{height:100%;background:var(--p400);border-radius:2px;width:0%;transition:width .08s linear;}
+@keyframes breathe{0%,100%{opacity:.35;}50%{opacity:1;}}
+
+.kp{
+  position:relative;overflow:hidden;font-family:Arial,sans-serif;
+  background:linear-gradient(160deg,#c5d5e5 0%,#d5e5f5 35%,#cfdff0 60%,#b8cce0 100%);
+}
+.kp-bg{position:absolute;inset:0;background:repeating-linear-gradient(30deg,rgba(80,120,180,.04) 0,rgba(80,120,180,.04) 1px,transparent 0,transparent 12px),repeating-linear-gradient(-30deg,rgba(80,120,180,.04) 0,rgba(80,120,180,.04) 1px,transparent 0,transparent 12px);}
+.kp-band{position:absolute;inset:0;background:linear-gradient(180deg,rgba(220,20,60,.06) 0%,rgba(220,20,60,.02) 20%,rgba(100,140,220,.04) 50%,rgba(220,20,60,.03) 80%,rgba(220,20,60,.06) 100%);}
+.kp-hd{position:absolute;top:0;left:0;right:0;background:#CC1421;display:flex;align-items:center;justify-content:space-between;z-index:5;}
+.kp-ws{position:absolute;left:0;right:0;background:#fff;z-index:5;}
+.kp-pol{position:absolute;background:#CC1421;color:#fff;font-weight:900;letter-spacing:1px;border-radius:2px;z-index:5;}
+.kp-photo{position:absolute;border:1px solid rgba(0,0,0,.2);z-index:4;overflow:hidden;display:flex;align-items:flex-end;justify-content:center;background:linear-gradient(180deg,#b0bcc8 0%,#8898a8 50%,#607080 100%);}
+.kp-person{border-radius:46% 46% 0 0/35% 35% 0 0;background:linear-gradient(180deg,#9aabb8,#7a8a98 40%,#5a6a78);}
+.kp-head{position:absolute;border-radius:50%;background:linear-gradient(180deg,#c8b8a8,#a89888);}
+.kp-chip{position:absolute;border-radius:4px;background:linear-gradient(135deg,#c8a820,#e8c840,#c8a820);border:0.5px solid #9a8010;z-index:4;}
+.kp-holo{position:absolute;border-radius:3px;border:0.5px solid rgba(255,255,255,.4);z-index:4;animation:holoC 2s ease-in-out infinite;}
+@keyframes holoC{0%,100%{background:linear-gradient(135deg,rgba(80,160,255,.35),rgba(255,80,200,.2),rgba(80,255,140,.2));}33%{background:linear-gradient(135deg,rgba(255,200,50,.3),rgba(80,255,140,.2),rgba(80,160,255,.2));}66%{background:linear-gradient(135deg,rgba(255,80,200,.3),rgba(80,160,255,.2),rgba(255,200,50,.2));}
+}
+.kp-flag{position:absolute;border-radius:2px;overflow:hidden;border:0.5px solid rgba(0,0,0,.15);z-index:5;}
+.kp-flag-w{height:50%;background:#fff;}
+.kp-flag-r{height:50%;background:#DC143C;}
+.kp-eagle{position:absolute;color:rgba(180,160,160,.15);z-index:1;line-height:1;}
+.kp-num{position:absolute;font-weight:700;color:#fff;letter-spacing:2px;z-index:6;}
+.kp-data{position:absolute;z-index:4;}
+.kp-fl{letter-spacing:.6px;color:#1a3366;font-weight:700;text-transform:uppercase;}
+.kp-fv{font-weight:900;color:#050520;letter-spacing:.3px;}
+.kp-fv.red{color:#CC1421;}
+.kp-sig{position:absolute;border-bottom:0.5px solid rgba(0,0,50,.2);z-index:4;font-family:'Brush Script MT',cursive;color:#334;opacity:.55;}
+.kp-mrz{position:absolute;bottom:0;left:0;right:0;background:rgba(190,210,230,.55);border-top:0.5px solid rgba(50,80,130,.25);font-family:'Courier New',monospace;color:#0a2244;letter-spacing:.4px;line-height:1.65;z-index:5;}
+
+.pre-kp{
+  width:380px;height:240px;border-radius:12px;
+  box-shadow:0 30px 80px rgba(0,0,0,.8);
+  animation:preKpSpin 2.2s cubic-bezier(.25,.46,.45,.94) forwards;
+}
+@keyframes preKpSpin{
+  0%{transform:perspective(900px) rotateY(-80deg) rotateX(15deg) scale(.65);}
+  55%{transform:perspective(900px) rotateY(10deg) rotateX(-4deg) scale(1.04);}
+  75%{transform:perspective(900px) rotateY(-4deg) rotateX(2deg) scale(1);}
+  100%{transform:perspective(900px) rotateY(-6deg) rotateX(3deg) scale(1);}
+}
+
+#fab{position:fixed;bottom:24px;right:24px;z-index:800;background:var(--p500);color:#fff;border:none;padding:14px 22px;border-radius:50px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 8px 32px rgba(83,74,183,.5);display:flex;align-items:center;gap:8px;transition:transform .2s,box-shadow .2s;}
+#fab:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(83,74,183,.7);}
+.fab-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;animation:dotPulse 1.5s ease-in-out infinite;}
+@keyframes dotPulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+#toast{position:fixed;bottom:100px;right:24px;z-index:800;background:var(--p800);border:1px solid rgba(127,119,221,.35);border-radius:16px;padding:20px 22px;width:276px;transform:translateX(120%);transition:transform .5s cubic-bezier(.34,1.56,.64,1);box-shadow:0 20px 60px rgba(0,0,0,.5);}
+#toast.on{transform:translateX(0);}
+.toast-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+.toast-title{font-size:14px;font-weight:600;}
+.toast-x{background:none;border:none;color:rgba(255,255,255,.3);cursor:pointer;font-size:18px;}
+.toast-x:hover{color:#fff;}
+.toast-body{font-size:12px;color:rgba(255,255,255,.5);line-height:1.6;margin-bottom:13px;}
+.toast-cta{width:100%;background:var(--p500);color:#fff;border:none;padding:9px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.toast-cta:hover{background:var(--p400);}
+
+.lang-switch{display:flex;align-items:center;gap:2px;background:rgba(127,119,221,.12);border:1px solid rgba(127,119,221,.25);border-radius:20px;padding:3px;margin-right:12px;}
+.lang-btn{background:none;border:none;padding:5px 12px;border-radius:16px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;color:rgba(255,255,255,.45);transition:all .2s;}
+.lang-btn.active{background:var(--p500);color:#fff;}
+.lang-btn:hover:not(.active){color:#fff;}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:500;padding:18px 60px;display:flex;align-items:center;justify-content:space-between;background:rgba(8,6,20,0);transition:all .4s;}
+nav.scrolled{background:rgba(8,6,20,.93);backdrop-filter:blur(24px);border-bottom:1px solid rgba(127,119,221,.12);padding:14px 60px;}
+.logo{display:flex;align-items:center;gap:14px;text-decoration:none;}
+.logo-name{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:700;letter-spacing:2px;color:#fff;}
+.logo-sub{font-size:9px;letter-spacing:3px;color:var(--p400);}
+.nav-links{display:flex;gap:32px;}
+.nav-links a{color:rgba(255,255,255,.55);text-decoration:none;font-size:13px;transition:color .2s;}
+.nav-links a:hover{color:#fff;}
+.nav-right{display:flex;align-items:center;}
+.nav-cta{background:var(--p500);color:#fff;border:none;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s;}
+.nav-cta:hover{background:var(--p400);}
+
+#hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:100px 60px 60px;position:relative;overflow:hidden;background:radial-gradient(ellipse 60% 80% at 20% 50%,rgba(83,74,183,.22) 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 80% 20%,rgba(127,119,221,.12) 0%,transparent 60%),var(--darker);}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(127,119,221,.12);border:1px solid rgba(127,119,221,.3);border-radius:24px;padding:6px 16px;font-size:11px;letter-spacing:2px;color:var(--p300);margin-bottom:28px;}
+.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:#4ade80;animation:dotPulse 2s ease-in-out infinite;}
+h1{font-family:'Cormorant Garamond',serif;font-size:clamp(44px,5vw,66px);font-weight:700;line-height:1.05;margin-bottom:22px;letter-spacing:-.5px;}
+h1 em{font-style:italic;color:var(--gold2);}
+h1 .acc{color:var(--p300);}
+.hero-desc{font-size:16px;line-height:1.75;color:rgba(255,255,255,.6);margin-bottom:36px;max-width:440px;font-weight:300;}
+.hero-btns{display:flex;gap:14px;margin-bottom:52px;}
+.btn-gold{background:var(--gold);color:#1a1000;border:none;padding:16px 32px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
+.btn-gold:hover{background:var(--gold2);transform:translateY(-2px);}
+.btn-ghost{background:transparent;color:rgba(255,255,255,.8);border:1px solid rgba(127,119,221,.4);padding:16px 28px;border-radius:10px;font-size:15px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
+.btn-ghost:hover{border-color:var(--p400);color:#fff;}
+.hero-proof{display:flex;gap:0;}
+.proof-item{padding:0 28px;border-left:1px solid rgba(127,119,221,.2);}
+.proof-item:first-child{padding-left:0;border-left:none;}
+.proof-num{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:700;color:var(--p200);line-height:1;}
+.proof-label{font-size:11px;color:rgba(255,255,255,.4);margin-top:4px;}
+.hero-right{display:flex;flex-direction:column;align-items:center;gap:16px;position:relative;z-index:2;}
+.hero-card-hint{font-size:11px;color:rgba(255,255,255,.22);letter-spacing:1px;}
+.hero-tags{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.hero-tag{background:rgba(83,74,183,.15);border:1px solid rgba(127,119,221,.25);border-radius:8px;padding:8px 14px;font-size:12px;color:var(--p200);}
+.scroll-hint{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:7px;color:rgba(255,255,255,.2);font-size:10px;letter-spacing:2px;}
+.scroll-arr{width:18px;height:18px;border-right:1.5px solid rgba(127,119,221,.4);border-bottom:1.5px solid rgba(127,119,221,.4);transform:rotate(45deg);animation:bounce 2s ease-in-out infinite;}
+@keyframes bounce{0%,100%{transform:rotate(45deg) translateY(0);}50%{transform:rotate(45deg) translateY(4px);}}
+
+.hero-kp-wrap{perspective:1200px;animation:heroFloat 5s ease-in-out infinite;}
+@keyframes heroFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+.hero-kp{
+  width:420px;height:265px;border-radius:14px;
+  box-shadow:20px 30px 80px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.12);
+  transform:rotateY(-8deg) rotateX(4deg);
+  transition:transform .5s ease;
+}
+.hero-kp:hover{transform:rotateY(2deg) rotateX(-1deg);}
+
+.section{padding:110px 60px;position:relative;}
+.s-inner{max-width:1080px;margin:0 auto;}
+.s-tag{display:inline-flex;align-items:center;gap:10px;font-size:10px;letter-spacing:3px;color:var(--p400);margin-bottom:14px;font-weight:500;}
+.s-tag::before{content:'';display:block;width:28px;height:1px;background:var(--p500);}
+.s-title{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,4vw,50px);font-weight:700;line-height:1.1;margin-bottom:14px;}
+.s-title em{font-style:italic;color:var(--gold2);}
+.s-desc{font-size:15px;color:rgba(255,255,255,.5);max-width:520px;line-height:1.75;font-weight:300;}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease;}
+.reveal.on{opacity:1;transform:translateY(0);}
+
+#services{background:var(--dark);}
+.svc-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;grid-template-rows:auto auto;gap:18px;margin-top:60px;}
+.svc{border-radius:18px;padding:32px 28px;position:relative;overflow:hidden;border:1px solid rgba(127,119,221,.15);background:rgba(26,22,64,.5);transition:all .3s;cursor:pointer;}
+.svc:hover{border-color:rgba(127,119,221,.45);transform:translateY(-3px);}
+.svc.main{grid-row:span 2;border-color:rgba(201,168,76,.4);background:linear-gradient(160deg,rgba(60,52,137,.7) 0%,rgba(26,22,64,.8) 60%);}
+.svc-badge{display:inline-block;font-size:9px;letter-spacing:2px;padding:4px 12px;border-radius:20px;margin-bottom:24px;font-weight:600;}
+.svc-badge.gold{background:rgba(201,168,76,.2);color:var(--gold2);border:1px solid rgba(201,168,76,.3);}
+.svc-badge.purple{background:rgba(83,74,183,.2);color:var(--p200);border:1px solid rgba(127,119,221,.25);}
+.svc-icon{width:54px;height:54px;border-radius:14px;background:rgba(127,119,221,.12);display:flex;align-items:center;justify-content:center;margin-bottom:20px;}
+.svc-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;margin-bottom:12px;line-height:1.2;}
+.svc-desc{font-size:13px;color:rgba(255,255,255,.5);line-height:1.7;margin-bottom:20px;}
+.svc-price{font-size:12px;font-weight:600;color:var(--p300);}
+.svc-arrow{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--p400);margin-top:20px;transition:gap .2s;}
+.svc:hover .svc-arrow{gap:10px;}
+.svc.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border-style:dashed;border-color:rgba(127,119,221,.2);background:transparent;}
+
+#jobs{background:var(--darker);}
+.jobs-intro{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;margin-bottom:60px;}
+.jobs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+.job-card{border-radius:16px;padding:24px;border:1px solid rgba(127,119,221,.18);background:rgba(26,22,64,.5);transition:all .3s;cursor:pointer;}
+.job-card:hover{border-color:rgba(127,119,221,.4);transform:translateY(-3px);}
+.job-card.featured{border-color:rgba(201,168,76,.35);background:linear-gradient(135deg,rgba(60,52,137,.6),rgba(26,22,64,.8));}
+.job-flag{font-size:24px;margin-bottom:12px;display:block;}
+.job-country{font-size:10px;letter-spacing:2px;color:var(--p400);margin-bottom:6px;font-weight:500;}
+.job-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;margin-bottom:8px;line-height:1.2;}
+.job-company{font-size:12px;color:rgba(255,255,255,.4);margin-bottom:14px;}
+.job-rate{display:inline-flex;align-items:baseline;gap:4px;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.25);border-radius:8px;padding:6px 12px;margin-bottom:14px;}
+.job-rate-num{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:var(--gold2);}
+.job-rate-unit{font-size:11px;color:rgba(201,168,76,.7);}
+.job-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.job-tag{font-size:10px;padding:3px 10px;border-radius:6px;background:rgba(83,74,183,.2);color:var(--p200);border:0.5px solid rgba(127,119,221,.2);}
+.job-info{font-size:12px;color:rgba(255,255,255,.4);margin-bottom:14px;line-height:1.5;}
+.job-cta{width:100%;background:var(--p500);color:#fff;border:none;padding:10px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s;}
+.job-cta:hover{background:var(--p400);}
+.job-card.featured .job-cta{background:var(--gold);color:#1a1000;}
+.job-card.featured .job-cta:hover{background:var(--gold2);}
+.jobs-banner{margin-top:40px;border-radius:18px;padding:36px 40px;background:linear-gradient(135deg,rgba(83,74,183,.25) 0%,rgba(26,22,64,.9) 100%);border:1px solid rgba(127,119,221,.25);display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.jobs-banner-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;margin-bottom:8px;}
+.jobs-banner-desc{font-size:14px;color:rgba(255,255,255,.5);line-height:1.65;max-width:520px;}
+.jobs-banner-btn{background:var(--gold);color:#1a1000;border:none;padding:16px 32px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;transition:all .2s;flex-shrink:0;}
+.jobs-banner-btn:hover{background:var(--gold2);}
+.jobs-kp-preview{display:flex;flex-direction:column;align-items:center;position:relative;}
+.jobs-kp-preview::before{content:'';position:absolute;inset:-40px;background:radial-gradient(ellipse,rgba(83,74,183,.18) 0%,transparent 70%);pointer-events:none;}
+.jobs-kp{
+  width:340px;height:215px;border-radius:10px;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+  animation:jobsFloat 5s ease-in-out infinite;
+  transform:perspective(900px) rotateY(-8deg) rotateX(4deg);
+}
+@keyframes jobsFloat{
+  0%,100%{transform:perspective(900px) rotateY(-8deg) rotateX(4deg) translateY(0);}
+  50%{transform:perspective(900px) rotateY(-12deg) rotateX(6deg) translateY(-8px);}
+}
+
+.jstep-pill{display:inline-flex;align-items:center;gap:8px;margin-top:14px;background:rgba(83,74,183,.15);border:1px solid rgba(127,119,221,.25);border-radius:8px;padding:8px 14px;font-size:12px;color:var(--p200);}
+
+#ai{background:linear-gradient(180deg,var(--darker) 0%,var(--p900) 100%);}
+.ai-wrap{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start;margin-top:60px;}
+.ai-item{display:flex;gap:18px;align-items:flex-start;padding:22px;border-radius:14px;border:1px solid transparent;transition:all .3s;}
+.ai-item:hover{background:rgba(83,74,183,.12);border-color:rgba(127,119,221,.25);}
+.ai-ico{width:46px;height:46px;border-radius:12px;background:rgba(127,119,221,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ai-item-title{font-size:15px;font-weight:600;margin-bottom:6px;}
+.ai-item-desc{font-size:13px;color:rgba(255,255,255,.5);line-height:1.65;}
+.terminal{background:#080614;border:1px solid rgba(127,119,221,.25);border-radius:16px;overflow:hidden;position:sticky;top:110px;}
+.term-bar{background:rgba(127,119,221,.08);padding:12px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(127,119,221,.15);}
+.td{width:10px;height:10px;border-radius:50%;}
+.term-title{margin-left:8px;font-size:11px;color:rgba(255,255,255,.3);letter-spacing:1px;}
+.term-body{padding:20px 22px;font-family:'Courier New',monospace;font-size:12px;line-height:1.9;}
+.tg{color:#4ade80;}.tb{color:var(--p300);}.ty{color:var(--gold2);}.tw{color:rgba(255,255,255,.75);}.tm{color:rgba(255,255,255,.3);}
+.tcursor{display:inline-block;width:7px;height:13px;background:var(--p400);animation:blink 1s step-end infinite;vertical-align:text-bottom;}
+@keyframes blink{50%{opacity:0;}}
+
+#journey{background:var(--p900);overflow:hidden;position:relative;}
+#journey::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:1px;background:linear-gradient(180deg,transparent,rgba(127,119,221,.3) 10%,rgba(127,119,221,.3) 90%,transparent);transform:translateX(-50%);}
+.journey-steps{margin-top:60px;}
+.jstep{display:grid;grid-template-columns:1fr 60px 1fr;gap:0;align-items:center;padding:50px 0;border-bottom:0.5px solid rgba(127,119,221,.1);}
+.jstep:last-child{border-bottom:none;}
+.jstep-left{text-align:right;padding-right:50px;}
+.jstep-right{padding-left:50px;}
+.jstep-center{display:flex;align-items:center;justify-content:center;position:relative;z-index:2;}
+.jstep-dot{width:52px;height:52px;border-radius:50%;background:var(--p700);border:2px solid var(--p400);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:var(--p200);}
+.jstep-num{font-family:'Cormorant Garamond',serif;font-size:72px;font-weight:700;color:rgba(127,119,221,.07);line-height:1;margin-bottom:-16px;}
+.jstep-tag{font-size:10px;letter-spacing:3px;color:var(--p400);margin-bottom:8px;}
+.jstep-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;margin-bottom:10px;}
+.jstep-desc{font-size:13px;color:rgba(255,255,255,.45);line-height:1.7;max-width:380px;}
+
+#reviews{background:var(--darker);}
+.rev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:60px;}
+.rev{background:rgba(26,22,64,.6);border:1px solid rgba(127,119,221,.15);border-radius:18px;padding:28px;transition:border-color .3s;}
+.rev:hover{border-color:rgba(127,119,221,.35);}
+.rev-stars{display:flex;gap:3px;margin-bottom:16px;}
+.star{color:var(--gold2);font-size:15px;}
+.rev-text{font-family:'Cormorant Garamond',serif;font-size:16px;line-height:1.8;color:rgba(255,255,255,.7);margin-bottom:22px;font-style:italic;}
+.rev-author{display:flex;align-items:center;gap:12px;}
+.rev-ava{width:42px;height:42px;border-radius:50%;background:var(--p600);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;}
+.rev-name{font-size:13px;font-weight:600;}
+.rev-from{font-size:11px;color:rgba(255,255,255,.35);margin-top:2px;}
+.rev-big{background:linear-gradient(135deg,rgba(83,74,183,.25),rgba(26,22,64,.8));border-color:rgba(127,119,221,.3);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;}
+.rev-big-num{font-family:'Cormorant Garamond',serif;font-size:56px;font-weight:700;color:var(--p200);line-height:1;}
+
+#cta{background:linear-gradient(135deg,var(--p800) 0%,var(--p900) 100%);text-align:center;padding:130px 60px;}
+.cta-title{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,5vw,60px);font-weight:700;margin-bottom:16px;line-height:1.1;}
+.cta-title em{font-style:italic;color:var(--gold2);}
+.cta-desc{font-size:16px;color:rgba(255,255,255,.5);margin-bottom:44px;max-width:460px;margin-left:auto;margin-right:auto;line-height:1.7;font-weight:300;}
+.cta-form{display:flex;gap:12px;max-width:420px;margin:0 auto 16px;}
+.cta-in{flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(127,119,221,.35);border-radius:10px;padding:14px 18px;color:#fff;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;}
+.cta-in:focus{border-color:var(--p400);}
+.cta-in::placeholder{color:rgba(255,255,255,.25);}
+.cta-go{background:var(--gold);color:#1a1000;border:none;padding:14px 24px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;transition:background .2s;}
+.cta-go:hover{background:var(--gold2);}
+.cta-fine{font-size:11px;color:rgba(255,255,255,.25);}
+
+footer{background:var(--p900);padding:70px 60px 36px;border-top:1px solid rgba(127,119,221,.12);}
+.ft-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:48px;margin-bottom:56px;}
+.ft-brand-name{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;letter-spacing:2px;margin-bottom:6px;}
+.ft-brand-sub{font-size:9px;letter-spacing:3px;color:var(--p400);margin-bottom:18px;}
+.ft-brand-desc{font-size:13px;color:rgba(255,255,255,.35);line-height:1.75;}
+.ft-col-title{font-size:10px;letter-spacing:2px;color:var(--p400);margin-bottom:18px;font-weight:600;}
+.ft-link{display:block;font-size:13px;color:rgba(255,255,255,.4);text-decoration:none;margin-bottom:12px;transition:color .2s;}
+.ft-link:hover{color:#fff;}
+.ft-bottom{border-top:1px solid rgba(127,119,221,.1);padding-top:24px;display:flex;justify-content:space-between;align-items:center;}
+.ft-copy{font-size:12px;color:rgba(255,255,255,.2);}
+.ft-ai{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--p400);background:rgba(83,74,183,.12);border:1px solid rgba(127,119,221,.18);padding:6px 14px;border-radius:20px;}
+
+#modal{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all .3s;backdrop-filter:blur(8px);}
+#modal.on{opacity:1;visibility:visible;}
+.modal-box{background:var(--p800);border:1px solid rgba(127,119,221,.35);border-radius:22px;padding:48px;max-width:460px;width:90%;position:relative;transform:scale(.95);transition:transform .3s;}
+#modal.on .modal-box{transform:scale(1);}
+.modal-close{position:absolute;top:18px;right:18px;background:none;border:none;color:rgba(255,255,255,.3);font-size:20px;cursor:pointer;}
+.modal-close:hover{color:#fff;}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;margin-bottom:8px;}
+.modal-desc{font-size:14px;color:rgba(255,255,255,.5);line-height:1.65;margin-bottom:26px;font-weight:300;}
+.modal-in{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(127,119,221,.3);border-radius:10px;padding:14px 18px;color:#fff;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:12px;display:block;}
+.modal-in:focus{border-color:var(--p400);}
+.modal-in::placeholder{color:rgba(255,255,255,.25);}
+.modal-btn{width:100%;background:var(--gold);color:#1a1000;border:none;padding:16px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s;}
+.modal-btn:hover{background:var(--gold2);}
+.modal-fine{font-size:11px;color:rgba(255,255,255,.2);text-align:center;margin-top:12px;}
+
+@media(max-width:900px){
+  nav{padding:14px 20px;}
+  .nav-links{display:none;}
+  #hero{grid-template-columns:1fr;padding:90px 20px 60px;}
+  .hero-right{display:none;}
+  .section{padding:70px 20px;}
+  .svc-grid,.jobs-grid,.rev-grid,.ft-grid{grid-template-columns:1fr;}
+  .svc.main{grid-row:auto;}
+  .ai-wrap,.jobs-intro{grid-template-columns:1fr;}
+  #journey::before{display:none;}
+  .jstep{grid-template-columns:1fr;text-align:left!important;}
+  .jstep-center{display:none;}
+  .jstep-left,.jstep-right{padding:0!important;text-align:left!important;}
+  .cta-form{flex-direction:column;}
+  .jobs-banner{flex-direction:column;}
+  .jobs-kp-preview{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- PRELOADER -->
+<div id="pre">
+  <div class="kp pre-kp" style="border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.8);">
+    <div class="kp-bg"></div><div class="kp-band"></div>
+    <div class="kp-hd" style="height:26px;padding:0 10px;font-size:11px;letter-spacing:2.5px;">
+      <span style="font-size:11px;font-weight:900;letter-spacing:2.5px;color:#fff;">KARTA POBYTU</span>
+      <div style="display:flex;align-items:center;gap:5px;"><span style="font-size:13px;">🦅</span><span style="font-size:7px;letter-spacing:1px;color:rgba(255,255,255,.85);">RZECZPOSPOLITA POLSKA</span></div>
+    </div>
+    <div class="kp-ws" style="top:26px;height:3px;"></div>
+    <div class="kp-num" style="top:6px;right:10px;font-size:8px;">ZR 9001000</div>
+    <div class="kp-pol" style="top:34px;left:8px;font-size:8px;padding:2px 5px;">POL</div>
+    <div class="kp-photo" style="top:43px;left:8px;width:64px;height:82px;">
+      <div class="kp-person" style="width:48px;height:66px;">
+        <div class="kp-head" style="top:7px;left:11px;width:26px;height:28px;"></div>
+      </div>
+    </div>
+    <div class="kp-chip" style="top:135px;left:8px;width:34px;height:24px;"></div>
+    <div class="kp-holo" style="top:43px;left:82px;width:32px;height:42px;"></div>
+    <div class="kp-flag" style="top:43px;right:8px;width:40px;height:26px;"><div class="kp-flag-w"></div><div class="kp-flag-r"></div></div>
+    <div class="kp-eagle" style="right:18px;top:72px;font-size:54px;">🦅</div>
+    <div class="kp-data" style="top:43px;left:124px;right:6px;">
+      <div class="kp-fl" style="font-size:5.5px;">Nazwisko / Surname</div>
+      <div class="kp-fv" style="font-size:10px;margin-bottom:5px;">WZOROWY</div>
+      <div class="kp-fl" style="font-size:5.5px;">Imię / Given name</div>
+      <div class="kp-fv" style="font-size:10px;margin-bottom:5px;">JANUSZ</div>
+      <div style="display:flex;gap:8px;">
+        <div><div class="kp-fl" style="font-size:5px;">Data ważności</div><div class="kp-fv red" style="font-size:8px;">2026-08-01</div></div>
+        <div><div class="kp-fl" style="font-size:5px;">Rodzaj</div><div class="kp-fv" style="font-size:7px;">CZAS OZNACZONY</div></div>
+      </div>
+      <div style="margin-top:4px;"><div class="kp-fl" style="font-size:5px;">Organ wydający</div><div class="kp-fv" style="font-size:7px;">WOJEW. MAZOWIECKI</div></div>
+    </div>
+    <div class="kp-sig" style="bottom:41px;left:8px;right:8px;padding-bottom:2px;font-size:11px;">Janusz Wzorowy</div>
+    <div class="kp-mrz" style="height:38px;padding:3px 8px;font-size:6.5px;">
+      IRPOLZR90010006&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>
+      8001014M1608012XXA&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;0<br>
+      WZOROWY&lt;&lt;JANUSZ&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
+    </div>
+  </div>
+  <div class="pre-label" id="pre-label">ЗАГРУЖАЕМ ВАШУ КАРТУ ПОБЫТУ</div>
+  <div class="pre-bar-wrap"><div class="pre-bar" id="pre-bar"></div></div>
+</div>
+
+<!-- TOAST -->
+<div id="toast">
+  <div class="toast-top">
+    <div class="toast-title" id="toast-title">⏰ Не откладывайте</div>
+    <button class="toast-x" onclick="hideToast()">✕</button>
+  </div>
+  <div class="toast-body" id="toast-body">Каждый месяц без карты побыту — риск штрафа. Запишитесь на бесплатную консультацию прямо сейчас.</div>
+  <button class="toast-cta" id="toast-cta" onclick="openModal()">Записаться бесплатно →</button>
+</div>
+
+<button id="fab" onclick="openModal()"><span class="fab-dot"></span><span id="fab-text">Бесплатная консультация</span></button>
+
+<!-- MODAL -->
+<div id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div style="font-size:32px;margin-bottom:16px;">📋</div>
+    <div class="modal-title" id="modal-title">Запишитесь на консультацию</div>
+    <div class="modal-desc" id="modal-desc">Бесплатно — разберём вашу ситуацию, скажем что нужно и сколько стоит.</div>
+    <input class="modal-in" placeholder="Ваше имя" id="m-name"/>
+    <input class="modal-in" placeholder="WhatsApp / Telegram / Телефон" id="m-phone"/>
+    <select class="modal-in" id="m-service">
+      <option value="" disabled selected>Что интересует?</option>
+      <option>Карта побыту</option>
+      <option>Постоянный побыт (ВНЖ)</option>
+      <option>Замена водительских прав</option>
+      <option>Код 95</option>
+      <option>Рабочая виза</option>
+      <option>Работа в Польше / Европе</option>
+      <option>Не знаю — нужна консультация</option>
+    </select>
+    <button class="modal-btn" id="modal-btn" onclick="submitModal()">Записаться — ответим за 15 минут →</button>
+    <div class="modal-fine" id="modal-fine">Без спама · Конфиденциально · Не передаём данные</div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a class="logo" href="#">
+    <svg width="34" height="32" viewBox="0 0 34 32"><rect x="0" y="9" width="7" height="20" rx="2" fill="#7F77DD"/><rect x="9" y="4" width="7" height="25" rx="2" fill="#AFA9EC"/><rect x="18" y="4" width="7" height="25" rx="2" fill="#AFA9EC"/><rect x="27" y="9" width="7" height="20" rx="2" fill="#7F77DD"/><rect x="0" y="5" width="34" height="4" rx="2" fill="#534AB7"/><rect x="0" y="29" width="34" height="3" rx="1.5" fill="#534AB7"/></svg>
+    <div><div class="logo-name">LEGAL SOLUTION</div><div class="logo-sub">LEGALIZATION SERVICES</div></div>
+  </a>
+  <div class="nav-links">
+    <a href="#services" id="nav-services">Услуги</a>
+    <a href="#journey" id="nav-how">Как работаем</a>
+    <a href="#jobs" id="nav-jobs">Работа</a>
+    <a href="#ai" id="nav-ai">ИИ-система</a>
+    <a href="#reviews" id="nav-reviews">Отзывы</a>
+  </div>
+  <div class="nav-right">
+    <div class="lang-switch"><button class="lang-btn active" onclick="setLang('ru')">RU</button><button class="lang-btn" onclick="setLang('en')">EN</button></div>
+    <button class="nav-cta" id="nav-cta" onclick="openModal()">Консультация</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div style="position:relative;z-index:2;">
+    <div class="hero-badge"><span class="hero-badge-dot"></span><span id="hero-badge">Варшава · Польша · Онлайн по всей стране</span></div>
+    <h1 id="hero-h1">Карта побыту<br>за <em>30 дней</em><br><span class="acc">под ключ</span></h1>
+    <p class="hero-desc" id="hero-desc">Берём на себя всё — от первого документа до карты в руках. ИИ-система следит за каждым шагом, ничего не потеряется.</p>
+    <div class="hero-btns">
+      <button class="btn-gold" onclick="openModal()" id="hero-btn1">Записаться бесплатно →</button>
+      <button class="btn-ghost" onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})" id="hero-btn2">Все услуги</button>
+    </div>
+    <div class="hero-proof">
+      <div class="proof-item"><div class="proof-num">1 200+</div><div class="proof-label" id="proof1">карт оформлено</div></div>
+      <div class="proof-item"><div class="proof-num">98%</div><div class="proof-label" id="proof2">успешных дел</div></div>
+      <div class="proof-item"><div class="proof-num">30 дн</div><div class="proof-label" id="proof3">средний срок</div></div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-kp-wrap">
+      <div class="kp hero-kp" id="heroCard">
+        <div class="kp-bg"></div><div class="kp-band"></div>
+        <div class="kp-hd" style="height:30px;padding:0 12px;"><span style="font-size:13px;font-weight:900;letter-spacing:3px;color:#fff;">KARTA POBYTU</span><div style="display:flex;align-items:center;gap:8px;"><span style="font-size:16px;">🦅</span><span style="font-size:8px;letter-spacing:1px;color:rgba(255,255,255,.85);">RZECZPOSPOLITA POLSKA</span></div></div>
+        <div class="kp-ws" style="top:30px;height:3px;"></div>
+        <div class="kp-num" style="top:6px;right:12px;font-size:9px;">ZR 9001000</div>
+        <div class="kp-pol" style="top:38px;left:10px;font-size:9px;padding:2px 7px;">POL</div>
+        <div class="kp-photo" style="top:48px;left:10px;width:82px;height:108px;">
+          <div class="kp-person" style="width:60px;height:88px;">
+            <div class="kp-head" style="top:8px;left:15px;width:30px;height:32px;"></div>
+          </div>
+        </div>
+        <div class="kp-chip" style="top:170px;left:10px;width:44px;height:32px;"></div>
+        <div class="kp-holo" style="top:48px;left:102px;width:40px;height:54px;"></div>
+        <div class="kp-flag" style="top:48px;right:10px;width:52px;height:34px;"><div class="kp-flag-w"></div><div class="kp-flag-r"></div></div>
+        <div class="kp-eagle" style="right:20px;top:90px;font-size:72px;">🦅</div>
+        <div class="kp-data" style="top:48px;left:152px;right:10px;">
+          <div class="kp-fl" style="font-size:6.5px;">Nazwisko / Surname / Фамилия</div>
+          <div class="kp-fv" style="font-size:13px;margin-bottom:6px;">WZOROWY</div>
+          <div class="kp-fl" style="font-size:6.5px;">Imię / Given name / Имя</div>
+          <div class="kp-fv" style="font-size:13px;margin-bottom:6px;">JANUSZ</div>
+          <div style="display:flex;gap:12px;margin-bottom:5px;">
+            <div><div class="kp-fl" style="font-size:6px;">Data ważności</div><div class="kp-fv red" style="font-size:11px;">2026-08-01</div></div>
+            <div><div class="kp-fl" style="font-size:6px;">Rodzaj zezwolenia</div><div class="kp-fv" style="font-size:8.5px;">CZAS OZNACZONY</div></div>
+          </div>
+          <div><div class="kp-fl" style="font-size:6px;">Organ wydający</div><div class="kp-fv" style="font-size:8px;">WOJEWODA MAZOWIECKI</div></div>
+        </div>
+        <div class="kp-sig" style="bottom:46px;left:10px;right:10px;padding-bottom:2px;font-size:13px;">Janusz Wzorowy</div>
+        <div class="kp-mrz" style="height:44px;padding:4px 10px;font-size:8px;">
+          IRPOLZR90010006&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>
+          8001014M1608012XXA&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;0<br>
+          WZOROWY&lt;&lt;JANUSZ&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
+        </div>
+      </div>
+    </div>
+    <div class="hero-card-hint" id="hero-hint">Наведите мышь на карту</div>
+    <div class="hero-tags">
+      <div class="hero-tag">✓ Без очередей</div>
+      <div class="hero-tag">✓ Онлайн</div>
+      <div class="hero-tag">✓ ИИ-контроль</div>
+      <div class="hero-tag">✓ 98% с первого раза</div>
+    </div>
+  </div>
+  <div class="scroll-hint"><span id="scroll-hint">ЛИСТАЙТЕ</span><div class="scroll-arr"></div></div>
+</section>
+
+<!-- SERVICES -->
+<section class="section" id="services">
+  <div class="s-inner">
+    <div class="s-tag reveal" id="svc-tag">Услуги</div>
+    <h2 class="s-title reveal" id="svc-title">Что мы делаем</h2>
+    <p class="s-desc reveal" id="svc-desc">От первой консультации до документа в руках. Полное сопровождение.</p>
+    <div class="svc-grid">
+      <div class="svc main reveal" onclick="openModal()">
+        <div class="svc-badge gold">⭐ ОСНОВНАЯ УСЛУГА</div>
+        <div class="svc-icon"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="2" y="4" width="24" height="18" rx="3" stroke="#C9A84C" stroke-width="1.5"/><rect x="6" y="8" width="6" height="5" rx="1" fill="rgba(201,168,76,.4)"/><path d="M14 10H22M14 13H20M14 16H18" stroke="#C9A84C" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+        <div class="svc-title">Карта побыту</div>
+        <div class="svc-desc">Временный вид на жительство в Польше. Помогаем собрать документы, записаться в Уженд и правильно подать заявление. 98% одобрений с первого раза.</div>
+        <div class="svc-price">от 800 PLN · срок 30–60 дней</div>
+        <div class="svc-arrow">Записаться →</div>
+      </div>
+      <div class="svc reveal" onclick="openModal()">
+        <div class="svc-badge purple">ВНЖ</div>
+        <div class="svc-icon"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M14 3L24 8V15C24 20 19 24 14 26C9 24 4 20 4 15V8L14 3Z" stroke="#AFA9EC" stroke-width="1.5"/><path d="M9 14L12 17L19 10" stroke="#AFA9EC" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div class="svc-title">Постоянный побыт</div>
+        <div class="svc-desc">Постоянный ВНЖ для тех, кто живёт в Польше 5+ лет. Полное сопровождение.</div>
+        <div class="svc-price">от 1 200 PLN</div>
+        <div class="svc-arrow">Подробнее →</div>
+      </div>
+      <div class="svc reveal" onclick="openModal()">
+        <div class="svc-badge purple">ПРАВА</div>
+        <div class="svc-icon"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="3" y="6" width="22" height="16" rx="2" stroke="#AFA9EC" stroke-width="1.5"/><circle cx="10" cy="14" r="3" stroke="#AFA9EC" stroke-width="1.2"/><path d="M16 11H23M16 14H21M16 17H23" stroke="#AFA9EC" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+        <div class="svc-title">Замена прав</div>
+        <div class="svc-desc">Обмен украинских и других прав на польские. Без очередей, с первого раза.</div>
+        <div class="svc-price">от 400 PLN · 14–21 день</div>
+        <div class="svc-arrow">Подробнее →</div>
+      </div>
+      <div class="svc reveal" onclick="openModal()">
+        <div class="svc-badge purple">КОД 95</div>
+        <div class="svc-icon"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4" y="8" width="20" height="14" rx="3" stroke="#AFA9EC" stroke-width="1.5"/><path d="M8 8V6C8 4.9 8.9 4 10 4H18C19.1 4 20 4.9 20 6V8" stroke="#AFA9EC" stroke-width="1.5"/><path d="M12 14H16M14 12V16" stroke="#AFA9EC" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div class="svc-title">Код 95</div>
+        <div class="svc-desc">Квалификация для профессиональных водителей. Запись на обучение и экзамен.</div>
+        <div class="svc-price">от 600 PLN</div>
+        <div class="svc-arrow">Подробнее →</div>
+      </div>
+      <div class="svc empty reveal" onclick="openModal()">
+        <div style="font-size:32px;margin-bottom:12px;">💬</div>
+        <div class="svc-title" style="font-size:18px;">Не знаете что нужно?</div>
+        <div class="svc-desc" style="margin-bottom:18px;">Расскажите ситуацию — подскажем бесплатно.</div>
+        <button class="btn-gold" style="font-size:13px;padding:12px 24px;">Бесплатная консультация</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- JOBS -->
+<section class="section" id="jobs">
+  <div class="s-inner">
+    <div class="jobs-intro">
+      <div>
+        <div class="s-tag reveal" id="jobs-tag">Работа</div>
+        <h2 class="s-title reveal" id="jobs-title">Ищете работу<br>в <em>Польше или Европе?</em></h2>
+        <p class="s-desc reveal" id="jobs-desc">Помогаем не только с документами, но и с трудоустройством. Легальная работа с хорошей ставкой — сразу после получения карты побыту.</p>
+        <div style="margin-top:28px;display:flex;flex-direction:column;gap:10px;">
+          <div class="jstep-pill reveal"><span>✓</span> Официальное трудоустройство</div>
+          <div class="jstep-pill reveal"><span>✓</span> Помощь с оформлением документов для работы</div>
+          <div class="jstep-pill reveal"><span>✓</span> Партнёрские компании по всей Польше и Европе</div>
+        </div>
+      </div>
+      <div class="jobs-kp-preview reveal">
+        <div class="kp jobs-kp">
+          <div class="kp-bg"></div><div class="kp-band"></div>
+          <div class="kp-hd" style="height:24px;padding:0 10px;"><span style="font-size:11px;font-weight:900;letter-spacing:2.5px;color:#fff;">KARTA POBYTU</span><span style="font-size:7px;letter-spacing:1px;color:rgba(255,255,255,.85);">RZECZPOSPOLITA POLSKA</span></div>
+          <div class="kp-ws" style="top:24px;height:3px;"></div>
+          <div class="kp-num" style="top:5px;right:10px;font-size:7.5px;">ZR 9001000</div>
+          <div class="kp-pol" style="top:32px;left:9px;font-size:8px;padding:1px 5px;">POL</div>
+          <div class="kp-photo" style="top:40px;left:9px;width:62px;height:82px;">
+            <div class="kp-person" style="width:46px;height:66px;">
+              <div class="kp-head" style="top:7px;left:10px;width:26px;height:28px;"></div>
+            </div>
+          </div>
+          <div class="kp-chip" style="top:132px;left:9px;width:32px;height:23px;"></div>
+          <div class="kp-holo" style="top:40px;left:80px;width:30px;height:40px;"></div>
+          <div class="kp-flag" style="top:40px;right:8px;width:40px;height:26px;"><div class="kp-flag-w"></div><div class="kp-flag-r"></div></div>
+          <div class="kp-eagle" style="right:14px;top:68px;font-size:52px;">🦅</div>
+          <div class="kp-data" style="top:40px;left:120px;right:6px;">
+            <div class="kp-fl" style="font-size:5.5px;">Nazwisko / Surname</div>
+            <div class="kp-fv" style="font-size:10px;margin-bottom:4px;">WZOROWY</div>
+            <div class="kp-fl" style="font-size:5.5px;">Imię / Given name</div>
+            <div class="kp-fv" style="font-size:10px;margin-bottom:4px;">JANUSZ</div>
+            <div style="display:flex;gap:8px;">
+              <div><div class="kp-fl" style="font-size:5px;">Data ważności</div><div class="kp-fv red" style="font-size:8px;">2026-08-01</div></div>
+              <div><div class="kp-fl" style="font-size:5px;">Rodzaj</div><div class="kp-fv" style="font-size:7px;">CZAS OZNACZONY</div></div>
+            </div>
+          </div>
+          <div class="kp-mrz" style="height:34px;padding:3px 8px;font-size:6.5px;">
+            IRPOLZR90010006&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>
+            8001014M1608012XXA&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;0<br>
+            WZOROWY&lt;&lt;JANUSZ&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
+          </div>
+        </div>
+        <div style="font-size:11px;color:rgba(255,255,255,.2);text-align:center;margin-top:14px;letter-spacing:1px;">Образец карты побыту</div>
+      </div>
+    </div>
+    <div class="jobs-grid">
+      <div class="job-card featured reveal"><span class="job-flag">🇵🇱</span><div class="job-country">ПОЛЬША · ВАРШАВА</div><div class="job-title">Работник склада</div><div class="job-company">Amazon Logistics / DHL / FM Logistic</div><div class="job-rate"><span class="job-rate-num">30</span><span class="job-rate-unit">PLN / час</span></div><div class="job-tags"><span class="job-tag">Склад</span><span class="job-tag">Упаковка</span><span class="job-tag">Погрузка</span><span class="job-tag">Смены 8ч</span></div><div class="job-info">~4 800 PLN/мес · Официально · Жильё включено</div><button class="job-cta" onclick="openModal()">Узнать подробнее →</button></div>
+      <div class="job-card reveal"><span class="job-flag">🇩🇪</span><div class="job-country">ГЕРМАНИЯ · БЕРЛИН / ГАМБУРГ</div><div class="job-title">Строитель / разнорабочий</div><div class="job-company">Bauunternehmen GmbH</div><div class="job-rate"><span class="job-rate-num">16</span><span class="job-rate-unit">EUR / час</span></div><div class="job-tags"><span class="job-tag">Стройка</span><span class="job-tag">Отделка</span><span class="job-tag">Монтаж</span></div><div class="job-info">~2 500 EUR/мес · Нужна рабочая виза или ВНЖ</div><button class="job-cta" onclick="openModal()">Узнать подробнее →</button></div>
+      <div class="job-card reveal"><span class="job-flag">🇧🇪</span><div class="job-country">БЕЛЬГИЯ · БРЮССЕЛЬ / АНТВЕРПЕН</div><div class="job-title">Работник производства</div><div class="job-company">Логистика и пищепром</div><div class="job-rate"><span class="job-rate-num">20</span><span class="job-rate-unit">EUR / час</span></div><div class="job-tags"><span class="job-tag">Производство</span><span class="job-tag">Фасовка</span><span class="job-tag">Смены</span></div><div class="job-info">~3 200 EUR/мес · Питание и жильё включены</div><button class="job-cta" onclick="openModal()">Узнать подробнее →</button></div>
+      <div class="job-card reveal"><span class="job-flag">🇳🇱</span><div class="job-country">НИДЕРЛАНДЫ · AMSTERDAM / ROTTERDAM</div><div class="job-title">Водитель-экспедитор</div><div class="job-company">TransEuropa Logistics</div><div class="job-rate"><span class="job-rate-num">22</span><span class="job-rate-unit">EUR / час</span></div><div class="job-tags"><span class="job-tag">Нужен Код 95</span><span class="job-tag">CE категория</span></div><div class="job-info">~3 500+ EUR/мес · Поможем оформить Код 95</div><button class="job-cta" onclick="openModal()">Узнать подробнее →</button></div>
+      <div class="job-card reveal"><span class="job-flag">🇵🇱</span><div class="job-country">ПОЛЬША · КРАКОВ / ВРОЦЛАВ</div><div class="job-title">Горничная / клинер</div><div class="job-company">Отели Marriott, Hilton, Accor</div><div class="job-rate"><span class="job-rate-num">28</span><span class="job-rate-unit">PLN / час</span></div><div class="job-tags"><span class="job-tag">Уборка</span><span class="job-tag">Отель</span><span class="job-tag">Гибкий график</span></div><div class="job-info">~4 200 PLN/мес · Официально · Без опыта</div><button class="job-cta" onclick="openModal()">Узнать подробнее →</button></div>
+      <div class="job-card reveal"><span class="job-flag">🇦🇹</span><div class="job-country">АВСТРИЯ · ВЕНА / ГРАЦ</div><div class="job-title">Разнорабочий / подсобник</div><div class="job-company">Строительство и ЖКХ</div><div class="job-rate"><span class="job-rate-num">18</span><span class="job-rate-unit">EUR / час</span></div><div class="job-tags"><span class="job-tag">Стройка</span><span class="job-tag">ЖКХ</span><span class="job-tag">Сезонно</span></div><div class="job-info">~2 800 EUR/мес · Сезонные и постоянные вакансии</div><button class="job-cta" onclick="openModal()">Узнать подробнее →</button></div>
+    </div>
+    <div class="jobs-banner reveal">
+      <div><div class="jobs-banner-title" id="jobs-banner-title">Нужна карта побыту для работы?</div><div class="jobs-banner-desc" id="jobs-banner-desc">Большинство работодателей в Европе требуют легальный статус. Оформим карту побыту быстро и сразу подберём вакансию.</div></div>
+      <button class="jobs-banner-btn" onclick="openModal()" id="jobs-banner-btn">Карта побыту + Работа →</button>
+    </div>
+  </div>
+</section>
+
+<!-- JOURNEY -->
+<section class="section" id="journey">
+  <div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:linear-gradient(180deg,transparent,rgba(127,119,221,.3) 10%,rgba(127,119,221,.3) 90%,transparent);transform:translateX(-50%);"></div>
+  <div class="s-inner">
+    <div class="s-tag reveal" style="justify-content:center;" id="journey-tag">Путь к карте</div>
+    <h2 class="s-title reveal" style="text-align:center;" id="journey-title">От звонка до <em>карты в руках</em></h2>
+    <div class="journey-steps">
+      <div class="jstep reveal"><div class="jstep-left"><div class="jstep-num">01</div><div class="jstep-tag">СТАРТ</div><div class="jstep-title">Бесплатная консультация</div><div class="jstep-desc">Рассказываете ситуацию — объясняем что нужно, сколько стоит и как быстро.</div><div class="jstep-pill">📱 WhatsApp · Telegram · Zoom · Офис</div></div><div class="jstep-center"><div class="jstep-dot">1</div></div><div class="jstep-right"></div></div>
+      <div class="jstep reveal"><div class="jstep-left"></div><div class="jstep-center"><div class="jstep-dot">2</div></div><div class="jstep-right"><div class="jstep-num">02</div><div class="jstep-tag">ПОДГОТОВКА</div><div class="jstep-title">Собираем документы</div><div class="jstep-desc">ИИ проверяет каждый документ — переводы, заверения, сроки. Ни одной ошибки.</div><div class="jstep-pill">🤖 ИИ-проверка автоматически</div></div></div>
+      <div class="jstep reveal"><div class="jstep-left"><div class="jstep-num">03</div><div class="jstep-tag">ЗАПИСЬ</div><div class="jstep-title">Записываемся в Уженд</div><div class="jstep-desc">Берём на себя запись в Urząd Wojewódzki. Экономим вам недели ожидания.</div><div class="jstep-pill">📅 7–14 дней до приёма</div></div><div class="jstep-center"><div class="jstep-dot">3</div></div><div class="jstep-right"></div></div>
+      <div class="jstep reveal"><div class="jstep-left"></div><div class="jstep-center"><div class="jstep-dot">4</div></div><div class="jstep-right"><div class="jstep-num">04</div><div class="jstep-tag">ПОДАЧА</div><div class="jstep-title">Подаём заявление</div><div class="jstep-desc">Сопровождаем на приём. Юрист проверяет всё до последней запятой.</div><div class="jstep-pill">✅ 98% одобрено с первого раза</div></div></div>
+      <div class="jstep reveal"><div class="jstep-left"><div class="jstep-num">05</div><div class="jstep-tag">РЕЗУЛЬТАТ</div><div class="jstep-title">Карта побыту в руках 🎉</div><div class="jstep-desc">Получаете карту. ИИ напомнит о продлении за 90 дней.</div><div class="jstep-pill">🔔 Напоминание автоматически</div></div><div class="jstep-center"><div class="jstep-dot">5</div></div><div class="jstep-right"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- AI -->
+<section class="section" id="ai" style="background:linear-gradient(180deg,var(--darker) 0%,var(--p900) 100%);">
+  <div class="s-inner">
+    <div class="s-tag reveal" id="ai-tag">Технологии</div>
+    <h2 class="s-title reveal" id="ai-title">ИИ следит за каждым<br><em>документом 24/7</em></h2>
+    <div class="ai-wrap">
+      <div>
+        <div class="ai-item reveal"><div class="ai-ico"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2L13.2 8.3H20L14.4 12.2L16.6 18.5L11 14.6L5.4 18.5L7.6 12.2L2 8.3H8.8L11 2Z" fill="#AFA9EC"/></svg></div><div><div class="ai-item-title">Ни один документ не потеряется</div><div class="ai-item-desc">Система хранит всё в зашифрованном облаке и уведомляет о каждом статусе.</div></div></div>
+        <div class="ai-item reveal"><div class="ai-ico"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="3" width="16" height="16" rx="3" stroke="#AFA9EC" stroke-width="1.5"/><path d="M7 11L10 14L15 8" stroke="#AFA9EC" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><div class="ai-item-title">Автопроверка перед подачей</div><div class="ai-item-desc">ИИ проверяет переводы, заверения, даты и находит ошибки до отказа.</div></div></div>
+        <div class="ai-item reveal"><div class="ai-ico"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="8" stroke="#AFA9EC" stroke-width="1.5"/><path d="M11 7V11L14 13" stroke="#AFA9EC" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><div class="ai-item-title">Напоминания о продлении</div><div class="ai-item-desc">За 90, 60 и 30 дней до окончания срока — уведомление в WhatsApp.</div></div></div>
+        <div class="ai-item reveal"><div class="ai-ico"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 6H18M4 11H18M4 16H12" stroke="#AFA9EC" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><div class="ai-item-title">Вся история в одном месте</div><div class="ai-item-desc">Документы, статусы, переписка — всё в личном кабинете с телефона.</div></div></div>
+      </div>
+      <div class="terminal reveal">
+        <div class="term-bar"><div class="td" style="background:#ff5f56"></div><div class="td" style="background:#ffbd2e"></div><div class="td" style="background:#27c93f"></div><span class="term-title">LEGAL SOLUTION AI · v2.5</span></div>
+        <div class="term-body">
+<div><span class="tm">$</span> <span class="tg">legal-ai</span> <span class="tb">scan --client="Ivan P."</span></div>
+<div class="tm">→ Анализирую документы...</div>
+<div><span class="tg">✓</span> <span class="tw">Zaświadczenie o zatrudnieniu</span> <span class="tg">OK</span></div>
+<div><span class="tg">✓</span> <span class="tw">Umowa o pracę</span> <span class="tg">OK</span></div>
+<div><span class="tg">✓</span> <span class="tw">Paszport biometryczny</span> <span class="tg">OK</span></div>
+<div><span class="tg">✓</span> <span class="tw">Zdjęcia 35×45mm</span> <span class="tg">OK</span></div>
+<div>&nbsp;</div>
+<div class="tm">→ Запись в Urząd:</div>
+<div><span class="ty">📅 15.02.2025 · 10:00</span></div>
+<div><span class="ty">📍 Mazowiecki UW, Warszawa</span></div>
+<div>&nbsp;</div>
+<div><span class="tg">✓ ГОТОВО К ПОДАЧЕ</span> <span class="tcursor"></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="section" id="reviews">
+  <div class="s-inner">
+    <div class="s-tag reveal" id="rev-tag">Отзывы</div>
+    <h2 class="s-title reveal" id="rev-title">Что говорят клиенты</h2>
+    <div class="rev-grid">
+      <div class="rev reveal"><div class="rev-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="rev-text">«Карту побыту оформили за 28 дней. Боялась не успеть до окончания визы — но всё прошло идеально.»</div><div class="rev-author"><div class="rev-ava">ОК</div><div><div class="rev-name">Оксана К.</div><div class="rev-from">🇺🇦 Украина → Варшава</div></div></div></div>
+      <div class="rev reveal"><div class="rev-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="rev-text">«Права поменял за 3 недели. Пробовал сам — два раза вернули. С Legal Solution с первого раза.»</div><div class="rev-author"><div class="rev-ava">АМ</div><div><div class="rev-name">Алексей М.</div><div class="rev-from">🇧🇾 Беларусь → Краков</div></div></div></div>
+      <div class="rev rev-big reveal"><div class="rev-big-num">1 200+</div><div style="font-size:13px;color:rgba(255,255,255,.5);">довольных клиентов</div><div style="font-size:22px;color:var(--gold2);">★★★★★</div><div style="font-size:12px;color:rgba(255,255,255,.3);">рейтинг 4.9 / 5</div><button class="btn-gold" style="font-size:13px;padding:12px 24px;margin-top:8px;" onclick="openModal()">Стать следующим →</button></div>
+      <div class="rev reveal"><div class="rev-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="rev-text">«Код 95 получила быстрее чем думала. Теперь работаю водителем официально.»</div><div class="rev-author"><div class="rev-ava">НС</div><div><div class="rev-name">Наталья С.</div><div class="rev-from">🇺🇦 Украина → Вроцлав</div></div></div></div>
+      <div class="rev reveal"><div class="rev-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="rev-text">«Нашли работу на складе сразу после карты. Помогли и с документами и с трудоустройством.»</div><div class="rev-author"><div class="rev-ava">ДП</div><div><div class="rev-name">Дмитрий П.</div><div class="rev-from">🇺🇦 Украина → Гданьск</div></div></div></div>
+      <div class="rev reveal"><div class="rev-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="rev-text">«Постоянный побыт с первой попытки! Всё через WhatsApp. Профессионалы своего дела.»</div><div class="rev-author"><div class="rev-ava">ЛВ</div><div><div class="rev-name">Людмила В.</div><div class="rev-from">🇺🇦 Украина → Варшава</div></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="s-tag reveal" style="justify-content:center;" id="cta-tag">Начать сейчас</div>
+  <h2 class="cta-title reveal" id="cta-title">Начните легализацию<br><em>сегодня</em></h2>
+  <p class="cta-desc reveal" id="cta-desc">Первая консультация бесплатно. Оставьте номер — ответим за 15 минут.</p>
+  <div class="cta-form reveal"><input class="cta-in" placeholder="WhatsApp или телефон" id="cta-in"/><button class="cta-go" onclick="openModal()" id="cta-btn">Записаться →</button></div>
+  <div class="cta-fine reveal" id="cta-fine">Без спама · Конфиденциально · Не передаём данные</div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-grid">
+    <div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;"><svg width="32" height="30" viewBox="0 0 32 30"><rect x="0" y="8" width="6" height="18" rx="1.5" fill="#7F77DD"/><rect x="8" y="3" width="6" height="23" rx="1.5" fill="#AFA9EC"/><rect x="16" y="3" width="6" height="23" rx="1.5" fill="#AFA9EC"/><rect x="24" y="8" width="6" height="18" rx="1.5" fill="#7F77DD"/><rect x="0" y="4" width="30" height="3.5" rx="1.5" fill="#534AB7"/><rect x="0" y="26" width="30" height="3" rx="1.5" fill="#534AB7"/></svg><div><div class="ft-brand-name">LEGAL SOLUTION</div><div class="ft-brand-sub">LEGALIZATION SERVICES</div></div></div>
+      <div class="ft-brand-desc" id="ft-desc">Легализация в Польше под ключ. Карта побыту, ВНЖ, замена прав, Код 95. Варшава и вся Польша.</div>
+    </div>
+    <div><div class="ft-col-title">УСЛУГИ</div><a class="ft-link" href="#">Карта побыту</a><a class="ft-link" href="#">Постоянный побыт</a><a class="ft-link" href="#">Замена прав</a><a class="ft-link" href="#">Код 95</a><a class="ft-link" href="#">Рабочие визы</a></div>
+    <div><div class="ft-col-title">РАБОТА</div><a class="ft-link" href="#">Склад в Польше</a><a class="ft-link" href="#">Работа в Германии</a><a class="ft-link" href="#">Работа в Бельгии</a><a class="ft-link" href="#">Водители (Код 95)</a><a class="ft-link" href="#">Все вакансии</a></div>
+    <div><div class="ft-col-title">КОНТАКТЫ</div><a class="ft-link" href="#">📱 WhatsApp</a><a class="ft-link" href="#">✈️ Telegram</a><a class="ft-link" href="#">📍 Варшава, Польша</a><a class="ft-link" href="#">✉️ info@legalsolution.pl</a></div>
+  </div>
+  <div class="ft-bottom"><div class="ft-copy" id="ft-copy">© 2025 Legal Solution. Все права защищены.</div><div class="ft-ai"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1L8 5H12L8.5 7.5L10 11L6.5 8.5L3 11L4.5 7.5L1 5H5L6.5 1Z" fill="#7F77DD"/></svg>Работает на ИИ</div></div>
+</footer>
+
+<script>
+(function(){
+  var prog=0,bar=document.getElementById('pre-bar');
+  var iv=setInterval(function(){
+    prog=Math.min(prog+Math.random()*5+2,100);
+    if(bar)bar.style.width=prog+'%';
+    if(prog>=100){clearInterval(iv);setTimeout(hidePre,500);}
+  },60);
+  setTimeout(hidePre,4000);
+  function hidePre(){var p=document.getElementById('pre');if(p)p.classList.add('out');}
+})();
+
+window.addEventListener('scroll',function(){
+  var n=document.getElementById('nav');if(n)n.classList.toggle('scrolled',window.scrollY>60);
+});
+
+function openModal(){document.getElementById('modal').classList.add('on');}
+function closeModal(){document.getElementById('modal').classList.remove('on');}
+function submitModal(){
+  var p=document.getElementById('m-phone');
+  if(!p||!p.value.trim()){alert(currentLang==='en'?'Please enter phone':'Укажите телефон');return;}
+  closeModal();
+  document.getElementById('toast-title').textContent=currentLang==='en'?'✅ Request received!':'✅ Заявка принята!';
+  document.getElementById('toast-body').textContent=currentLang==='en'?"We'll contact you in 15 min.":'Свяжемся в течение 15 минут.';
+  document.getElementById('toast-cta').textContent=currentLang==='en'?'Great!':'Отлично!';
+  document.getElementById('toast-cta').onclick=hideToast;
+  showToast();setTimeout(hideToast,6000);
+}
+
+function showToast(){document.getElementById('toast').classList.add('on');}
+function hideToast(){document.getElementById('toast').classList.remove('on');}
+setTimeout(function(){showToast();setTimeout(hideToast,8000);},14000);
+setInterval(function(){showToast();setTimeout(hideToast,8000);},50000);
+
+var obs=new IntersectionObserver(function(entries){
+  entries.forEach(function(e,i){if(e.isIntersecting)setTimeout(function(){e.target.classList.add('on');},i*80);});
+},{threshold:0.08});
+document.querySelectorAll('.reveal').forEach(function(el){obs.observe(el);});
+
+var heroCard=document.getElementById('heroCard');
+if(heroCard){
+  document.addEventListener('mousemove',function(e){
+    var r=heroCard.getBoundingClientRect();
+    var dx=(e.clientX-r.left-r.width/2)/30;
+    var dy=(e.clientY-r.top-r.height/2)/30;
+    heroCard.style.transform='rotateY('+dx+'deg) rotateX('+(-dy)+'deg)';
+    heroCard.style.transition='transform 0.1s ease';
+  });
+}
+
+var currentLang='ru';
+var T={
+  ru:{'nav-services':'Услуги','nav-how':'Как работаем','nav-jobs':'Работа','nav-ai':'ИИ-система','nav-reviews':'Отзывы','nav-cta':'Консультация','fab-text':'Бесплатная консультация','toast-title':'⏰ Не откладывайте','toast-body':'Каждый месяц без карты побыту — риск штрафа.','toast-cta':'Записаться бесплатно →','modal-title':'Запишитесь на консультацию','modal-desc':'Бесплатно — разберём вашу ситуацию.','modal-btn':'Записаться — ответим за 15 минут →','modal-fine':'Без спама · Конфиденциально','hero-badge':'Варшава · Польша · Онлайн по всей стране','hero-h1':'Карта побыту<br>за <em>30 дней</em><br><span class="acc">под ключ</span>','hero-desc':'Берём на себя всё — от первого документа до карты в руках. ИИ-система следит за каждым шагом.','hero-btn1':'Записаться бесплатно →','hero-btn2':'Все услуги','proof1':'карт оформлено','proof2':'успешных дел','proof3':'средний срок','hero-hint':'Наведите мышь на карту','scroll-hint':'ЛИСТАЙТЕ','svc-tag':'Услуги','svc-title':'Что мы делаем','svc-desc':'От первой консультации до документа в руках.','jobs-tag':'Работа','jobs-title':'Ищете работу<br>в <em>Польше или Европе?</em>','jobs-desc':'Помогаем не только с документами, но и с трудоустройством.','jobs-banner-title':'Нужна карта побыту для работы?','jobs-banner-desc':'Большинство работодателей в Европе требуют легальный статус.','jobs-banner-btn':'Карта побыту + Работа →','ai-tag':'Технологии','ai-title':'ИИ следит за каждым<br><em>документом 24/7</em>','journey-tag':'Путь к карте','journey-title':'От звонка до <em>карты в руках</em>','rev-tag':'Отзывы','rev-title':'Что говорят клиенты','cta-tag':'Начать сейчас','cta-title':'Начните легализацию<br><em>сегодня</em>','cta-desc':'Первая консультация бесплатно. Оставьте номер — ответим за 15 минут.','cta-btn':'Записаться →','cta-fine':'Без спама · Конфиденциально','ft-desc':'Легализация в Польше под ключ. Варшава и вся Польша.','ft-copy':'© 2025 Legal Solution. Все права защищены.','pre-label':'ЗАГРУЖАЕМ ВАШУ КАРТУ ПОБЫТУ'},
+  en:{'nav-services':'Services','nav-how':'How It Works','nav-jobs':'Jobs','nav-ai':'AI System','nav-reviews':'Reviews','nav-cta':'Consultation','fab-text':'Free Consultation','toast-title':'⏰ Don\'t delay','toast-body':'Every month without a permit is a risk.','toast-cta':'Book for free →','modal-title':'Book a Consultation','modal-desc':'Free — we\'ll tell you exactly what you need.','modal-btn':'Book — reply within 15 min →','modal-fine':'No spam · Confidential','hero-badge':'Warsaw · Poland · Online nationwide','hero-h1':'Residence Permit<br>in <em>30 days</em><br><span class="acc">turnkey</span>','hero-desc':'We handle everything from the first document to the card in your hands. AI tracks every step.','hero-btn1':'Book for free →','hero-btn2':'All services','proof1':'permits issued','proof2':'success rate','proof3':'avg. time','hero-hint':'Hover over the card','scroll-hint':'SCROLL','svc-tag':'Services','svc-title':'What We Do','svc-desc':'From first consultation to document in hand.','jobs-tag':'Jobs','jobs-title':'Looking for work<br>in <em>Poland or Europe?</em>','jobs-desc':'We help with documents and employment. Legal work with great pay.','jobs-banner-title':'Need a permit to work?','jobs-banner-desc':'Most employers in Europe require legal status.','jobs-banner-btn':'Permit + Job →','ai-tag':'Technology','ai-title':'AI monitors every<br><em>document 24/7</em>','journey-tag':'Your journey','journey-title':'From your call to <em>card in hand</em>','rev-tag':'Reviews','rev-title':'What our clients say','cta-tag':'Get started','cta-title':'Start your legalisation<br><em>today</em>','cta-desc':'First consultation is free. Leave your number — reply in 15 min.','cta-btn':'Book →','cta-fine':'No spam · Confidential','ft-desc':'Legalisation in Poland, turnkey. Warsaw and all of Poland.','ft-copy':'© 2025 Legal Solution. All rights reserved.','pre-label':'LOADING YOUR RESIDENCE CARD'}
+};
+function setLang(lang){
+  currentLang=lang;
+  var tr=T[lang];
+  Object.keys(tr).forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML=tr[id];});
+  document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.toggle('active',b.textContent===lang.toUpperCase());});
+  var ni=document.getElementById('m-name'),pi=document.getElementById('m-phone'),ci=document.getElementById('cta-in');
+  if(lang==='en'){if(ni)ni.placeholder='Your name';if(pi)pi.placeholder='WhatsApp / Telegram / Phone';if(ci)ci.placeholder='WhatsApp or phone';}
+  else{if(ni)ni.placeholder='Ваше имя';if(pi)pi.placeholder='WhatsApp / Telegram / Телефон';if(ci)ci.placeholder='WhatsApp или телефон';}
+}
+</script>
+</body>
+</html>
